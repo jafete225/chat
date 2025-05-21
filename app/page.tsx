@@ -16,7 +16,7 @@ const AssistenteIA = () => {
   useEffect(() => {
     setMounted(true);
   }, []);
-  const [activeTab, setActiveTab] = useState('chat');
+  //const [activeTab, setActiveTab] = useState('chat');
   const [messages, setMessages] = useState([
     { id: 1, text: 'Olá! 👋', sender: 'ai', animate: true },
     { id: 2, text: 'Como posso te ajudar hoje?', sender: 'ai', animate: true }
@@ -55,6 +55,7 @@ const AssistenteIA = () => {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getAIResponse = (userMessage: string) => {
     const responses = [
       "Posso te ajudar com isso! Aqui estão algumas opções:",
