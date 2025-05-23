@@ -8,6 +8,16 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
+      colors: {
+        violet: {
+          500: '#8B5CF6',
+          600: '#7C3AED',
+        },
+      },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+      },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',
         'slide-in': 'slideIn 0.3s ease-out',
