@@ -63,6 +63,11 @@ const sidebarVariants = {
   closed: { x: '-100%' }
 };
 
+const overlayVariants = {
+  open: { opacity: 0.5 },
+  closed: { opacity: 0 }
+};
+
 const Pagina = () => {
   const [botaoAtivo, setBotaoAtivo] = useState('Chat');
   const [mensagens, setMensagens] = useState<Mensagem[]>([
@@ -199,7 +204,7 @@ const Pagina = () => {
   ];
 
   return (
-    <div className="flex h-screen bg-gray-100 text-sm">
+    <div className="flex h-screen bg-gray-100 text-sm overflow-hidden">
       <div className="flex-1 flex flex-col">
         {/* Cabeçalho */}
         <motion.div
@@ -292,61 +297,74 @@ const Pagina = () => {
           {/* Sidebar Mobile (aparece apenas em telas pequenas) */}
           <AnimatePresence>
             {mobileSidebarVisivel && (
-              <motion.div
-                initial="closed"
-                animate="open"
-                exit="closed"
-                variants={sidebarVariants}
-                transition={{ type: 'tween', ease: 'easeInOut' }}
-                className="md:hidden fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg"
-              >
-                <div className="h-full flex flex-col">
-                  <div className="p-4 border-b">
-                    <h2 className="text-lg font-bold">Menu</h2>
-                  </div>
-                  <div className="flex-1 overflow-y-auto p-4">
-                    {/* Conteúdo da sidebar mobile */}
-                    <div className="space-y-6">
-                      <div>
-                        <h3 className="text-xs text-gray-500 mb-2">Menu Principal</h3>
-                        <div className="space-y-1">
-                          {itensSidebar.map((item, index) => (
-                            <button
-                              key={index}
-                              onClick={() => {
-                                setBotaoAtivo(item.label);
-                                setMobileSidebarVisivel(false);
-                              }}
-                              className={`w-full flex items-center gap-2 p-2 rounded-lg ${botaoAtivo === item.label ? 'bg-gray-100' : 'hover:bg-gray-50'}`}
-                            >
-                              {item.icone}
-                              <span>{item.label}</span>
-                            </button>
+              <>
+                <motion.div
+                  initial="closed"
+                  animate="open"
+                  exit="closed"
+                  variants={sidebarVariants}
+                  transition={{ type: 'tween', ease: 'easeInOut' }}
+                  className="md:hidden fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg"
+                >
+                  <div className="h-full flex flex-col">
+                    <div className="p-4 border-b flex justify-between items-center">
+                      <h2 className="text-lg font-bold text-black">Menu</h2>
+                      <button onClick={toggleMobileSidebar} className="p-1">
+                        <FiX className="w-5 h-5" />
+                      </button>
+                    </div>
+                    <div className="flex-1 overflow-y-auto p-4">
+                      <div className="space-y-6">
+                        <div>
+                          <h3 className="text-xs text-gray-500 mb-2">Menu Principal</h3>
+                          <div className="space-y-1 text-black">
+                            {itensSidebar.map((item, index) => (
+                              <button
+                                key={index}
+                                onClick={() => {
+                                  setBotaoAtivo(item.label);
+                                  setMobileSidebarVisivel(false);
+                                }}
+                                className={`w-full flex items-center gap-2 p-2 rounded-lg ${botaoAtivo === item.label ? 'bg-gray-100' : 'hover:bg-gray-50'}`}
+                              >
+                                {item.icone}
+                                <span>{item.label}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <h3 className="text-xs text-gray-500 mb-2">Histórico de Chats</h3>
+                          {secoesChat.map((secao, indexSecao) => (
+                            <div key={indexSecao} className="space-y-1 mb-4 text-black">
+                              <h4 className="text-xs text-gray-500">{secao.titulo}</h4>
+                              {secao.chats.map((chat, indexChat) => (
+                                <div 
+                                  key={indexChat}
+                                  className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-sm cursor-pointer"
+                                >
+                                  {!chat.somenteTexto && chat.icone}
+                                  <span className="text-sm truncate">{chat.titulo}</span>
+                                </div>
+                              ))}
+                            </div>
                           ))}
                         </div>
                       </div>
-                      
-                      <div>
-                        <h3 className="text-xs text-gray-500 mb-2">Histórico de Chats</h3>
-                        {secoesChat.map((secao, indexSecao) => (
-                          <div key={indexSecao} className="space-y-1 mb-4">
-                            <h4 className="text-xs text-gray-500">{secao.titulo}</h4>
-                            {secao.chats.map((chat, indexChat) => (
-                              <div 
-                                key={indexChat}
-                                className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-sm cursor-pointer"
-                              >
-                                {!chat.somenteTexto && chat.icone}
-                                <span className="text-sm truncate">{chat.titulo}</span>
-                              </div>
-                            ))}
-                          </div>
-                        ))}
-                      </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
+                </motion.div>
+
+                <motion.div
+                  initial="closed"
+                  animate="open"
+                  exit="closed"
+                  variants={overlayVariants}
+                  onClick={toggleMobileSidebar}
+                  className="md:hidden fixed inset-0 z-40 bg-black"
+                />
+              </>
             )}
           </AnimatePresence>
 
@@ -486,20 +504,7 @@ const Pagina = () => {
           </AnimatePresence>
 
           {/* Área Principal de Conteúdo */}
-          <div className="flex-1 flex flex-col bg-white overflow-hidden">
-            {/* Overlay para sidebar mobile */}
-            <AnimatePresence>
-              {mobileSidebarVisivel && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 0.5 }}
-                  exit={{ opacity: 0 }}
-                  onClick={toggleMobileSidebar}
-                  className="md:hidden fixed inset-0 z-40 bg-black"
-                />
-              )}
-            </AnimatePresence>
-
+          <div className={`flex-1 flex flex-col bg-white overflow-hidden ${mobileSidebarVisivel ? 'md:ml-0' : ''}`}>
             {/* Área de mensagens */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-6">
               <div className="max-w-2xl mx-auto space-y-3 sm:space-y-4">
